@@ -2,38 +2,30 @@
 
 var $note = document.getElementById('note');
 var $pitch = document.getElementById('pitch');
+var tuner;
+var voice = new Wad({
+    source: 'mic',
+    volume: 1
+});
 
-var rafId;
-
-var logPitch = function(){
-    // console.log(tuner.pitch, tuner.noteName);
-    rafId = requestAnimationFrame(logPitch);
+function logPitch(){
+    console.log(tuner.pitch, tuner.noteName);
+    requestAnimationFrame(logPitch);
     if(tuner.noteName){
         $note.innerHTML = tuner.noteName;
     }
     $pitch.innerHTML = tuner.pitch||'';
 };
-var voice = new Wad({
-    source  : 'mic',
-    volume: 1,
-    // reverb  : {
-    //     wet : .4
-    // },
-    // filter  : {
-    //     type      : 'highpass',
-    //     frequency : 700
-    // },
-    // panning : -.2
-});
-var tuner = new Wad.Poly();
-// var logPitch = function(){
-//     console.log(tuner.pitch, tuner.noteName);
-//     document.getElementById('output').innerHTML = tuner.noteName;
-// };
-// tuner.setVolume(0) // mute the tuner to avoid feedback
-tuner.add(voice);
-voice.play({
-    volume: 1
-});
-tuner.updatePitch();
-requestAnimationFrame(logPitch);
+
+function detectTune(){
+    if(!Wad.micConsent){
+        return setTimeout(detectTune, 100);
+    }
+    tuner = new Wad.Poly();
+    tuner.add(voice);
+    voice.play({volume: 1});
+    tuner.updatePitch();
+    requestAnimationFrame(logPitch);
+}
+
+detectTune();
