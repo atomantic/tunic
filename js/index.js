@@ -11,7 +11,7 @@ var logPitch = function(){
     if(tuner.noteName){
         $note.innerHTML = tuner.noteName;
     }
-    $pitch.innerHTML = tuner.pitch;
+    $pitch.innerHTML = tuner.pitch||'';
 };
 var voice = new Wad({
     source  : 'mic',
